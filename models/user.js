@@ -15,13 +15,16 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: { type: DataTypes.STRING, allowNull: false },
       email: { type: DataTypes.STRING, allowNull: false, unique: true },
-      password: DataTypes.STRING,
-      image: DataTypes.STRING,
-      description: DataTypes.TEXT,
+      password: { type: DataTypes.STRING, allowNull: false },
+      image: {
+        type: DataTypes.STRING,
+        defaultValue: "Images//blank-profile-picture.png",
+      },
+      description: { type: DataTypes.TEXT, allowNull: false },
       address: DataTypes.TEXT,
       city: DataTypes.STRING,
-      country: DataTypes.STRING,
-      isHost: DataTypes.BOOLEAN,
+      country: { type: DataTypes.STRING, allowNull: false },
+      isHost: { type: DataTypes.BOOLEAN, allowNull: false },
     },
     {
       sequelize,

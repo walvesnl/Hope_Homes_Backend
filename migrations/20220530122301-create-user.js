@@ -1,31 +1,5 @@
 "use strict";
 
-const multer = require("multer");
-const path = require("path");
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "Images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: "4000000" },
-  fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|gif/;
-    const mimeType = fileTypes.test(file.mimetype);
-    const extname = fileTypes.test(path.extname(file.originalname));
-    if (mimeType && extname) {
-      return cb(null, true);
-    }
-    cb("Please upload JPG, PNG or GIF file");
-  },
-}).single("image");
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("users", {
@@ -37,18 +11,24 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       image: {
         type: Sequelize.STRING,
+        defaultValue: "Images//blank-profile-picture.png",
       },
       description: {
         type: Sequelize.TEXT,
+        allowNull: false,
       },
       address: {
         type: Sequelize.TEXT,
@@ -58,9 +38,11 @@ module.exports = {
       },
       country: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       isHost: {
         type: Sequelize.BOOLEAN,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
