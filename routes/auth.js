@@ -7,6 +7,7 @@ const { toJWT } = require("../auth/jwt");
 const { SALT_ROUNDS } = require("../config/constants");
 const multer = require("multer");
 const path = require("path");
+const auth = require("../auth/middleware");
 
 // IMAGE UPLOAD LOGIC
 const storage = multer.diskStorage({
@@ -47,7 +48,6 @@ auth.get("/", async (req, res) => {
 // SIGNUP ROUTE
 auth.post("/signup", upload, async (req, res) => {
   try {
-    console.log("Helloooo", req.image, req.file);
     const {
       name,
       email,
@@ -88,6 +88,45 @@ auth.post("/signup", upload, async (req, res) => {
 
     return res.status(400).send({ message: "Something went wrong, sorry" });
   }
+});
+
+// LOGIN ROUTE
+
+auth.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .send({ message: "Please provide both email and password" });
+    }
+
+    const user = await User.findOne({
+      where: { email },
+    });
+
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(400).send({
+        message: "User with that email not found or password incorrect",
+      });
+    }
+
+    delete user.dataValues["password"];
+
+    const token = toJWT({ userId: user.id });
+    console.log("userdata", user.dataValues);
+
+    return res.status(200).send({ token, user: user.dataValues });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({ message: "Something went wrong, sorry" });
+  }
+});
+
+router.get("/me", authMiddleware, async (req, res) => {
+  delete req.user.dataValues["password"];
+  res.status(200).send({ ...req.user.dataValues });
 });
 
 module.exports = auth;
