@@ -1,11 +1,14 @@
 const express = require("express");
 const { Router } = express;
-const userRouter = new Router();
+const auth = new Router();
 const User = require("../models").user;
-
+const bcrypt = require("bcrypt");
+const { toJWT } = require("../auth/jwt");
+const { SALT_ROUNDS } = require("../config/constants");
 const multer = require("multer");
 const path = require("path");
 
+// IMAGE UPLOAD LOGIC
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "Images");
@@ -29,7 +32,9 @@ const upload = multer({
   },
 }).single("image");
 
-userRouter.get("/", async (req, res) => {
+// GET ALL USERS (ADD AUTH LATER)
+
+auth.get("/", async (req, res) => {
   try {
     const allUsers = await User.findAll();
     console.log(allUsers);
@@ -39,20 +44,47 @@ userRouter.get("/", async (req, res) => {
   }
 });
 
-userRouter.post("/", upload, async (req, res) => {
+// SIGNUP ROUTE
+auth.post("/signup", upload, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      description,
+      address,
+      city,
+      country,
+      isHost,
+    } = req.body;
 
     const newUser = await User.create({
       name,
       email,
-      password,
+      password: bcrypt.hashSync(password, SALT_ROUNDS),
+      description,
+      address,
+      city,
+      country,
+      isHost,
       image: req.file.path,
     });
-    res.status(200).send(newUser);
+
+    delete newUser.dataValues["password"];
+
+    const token = toJWT({ userId: newUser.id });
+    console.log("new user", newUser.dataValues);
+
+    res.status(201).send({ token, user: newUser.dataValues });
   } catch (e) {
-    console.log(e.message);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res
+        .status(400)
+        .send({ message: "There is an existing account with this email" });
+    }
+
+    return res.status(400).send({ message: "Something went wrong, sorry" });
   }
 });
 
-module.exports = userRouter;
+module.exports = auth;

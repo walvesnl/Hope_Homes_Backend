@@ -1,13 +1,14 @@
 const express = require("express");
-const User = require("./models").user;
 const app = express();
-const PORT = 4000;
+const { PORT } = require("./config/constants");
+const cors = require("cors");
 const jsonParser = express.json();
-const userRouter = require("./routes/userRouter");
+const authRouter = require("./routes/auth");
 
 app.use(jsonParser);
+app.use(cors());
 
-app.use("/user", userRouter);
+app.use("/auth", authRouter);
 
 app.use("/Images", express.static("./Images"));
 
