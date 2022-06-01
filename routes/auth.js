@@ -21,15 +21,15 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits: { fileSize: "4000000" },
-  fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|gif/;
+  /*  fileFilter: (req, file, cb) => {
+   const fileTypes = /jpeg|jpg|png|gif/;
     const mimeType = fileTypes.test(file.mimetype);
     const extname = fileTypes.test(path.extname(file.originalname));
     if (mimeType && extname) {
       return cb(null, true);
     }
     cb("Please upload JPG, PNG or GIF file");
-  },
+  },*/
 }).single("image");
 
 // GET ALL USERS (ADD AUTH LATER)
@@ -47,6 +47,7 @@ auth.get("/", async (req, res) => {
 // SIGNUP ROUTE
 auth.post("/signup", upload, async (req, res) => {
   try {
+    console.log("Helloooo", req.image, req.file);
     const {
       name,
       email,
@@ -58,16 +59,17 @@ auth.post("/signup", upload, async (req, res) => {
       isHost,
     } = req.body;
 
+    console.log("this is the file req log", req.files);
     const newUser = await User.create({
       name,
       email,
       password: bcrypt.hashSync(password, SALT_ROUNDS),
+      image: req.file.path,
       description,
       address,
       city,
       country,
       isHost,
-      image: req.file.path,
     });
 
     delete newUser.dataValues["password"];
@@ -77,7 +79,8 @@ auth.post("/signup", upload, async (req, res) => {
 
     res.status(201).send({ token, user: newUser.dataValues });
   } catch (e) {
-    if (error.name === "SequelizeUniqueConstraintError") {
+    console.log(e.message);
+    if (e.name === "SequelizeUniqueConstraintError") {
       return res
         .status(400)
         .send({ message: "There is an existing account with this email" });

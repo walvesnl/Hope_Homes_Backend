@@ -5,8 +5,8 @@ const cors = require("cors");
 const jsonParser = express.json();
 const authRouter = require("./routes/auth");
 
-app.use(jsonParser);
 app.use(cors());
+// app.use(jsonParser);
 
 app.use("/auth", authRouter);
 
