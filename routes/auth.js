@@ -7,7 +7,7 @@ const { toJWT } = require("../auth/jwt");
 const { SALT_ROUNDS } = require("../config/constants");
 const multer = require("multer");
 const path = require("path");
-const auth = require("../auth/middleware");
+const authMiddleware = require("../auth/middleware");
 
 // IMAGE UPLOAD LOGIC
 const storage = multer.diskStorage({
@@ -94,6 +94,8 @@ auth.post("/signup", upload, async (req, res) => {
 
 auth.post("/login", async (req, res, next) => {
   try {
+    console.log(req.body);
+
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -124,7 +126,7 @@ auth.post("/login", async (req, res, next) => {
   }
 });
 
-router.get("/me", authMiddleware, async (req, res) => {
+auth.get("/me", authMiddleware, async (req, res) => {
   delete req.user.dataValues["password"];
   res.status(200).send({ ...req.user.dataValues });
 });

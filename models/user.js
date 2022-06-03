@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       password: { type: DataTypes.STRING, allowNull: false },
       image: {
         type: DataTypes.STRING,
-        defaultValue: "Images//blank-profile-picture.png",
+        defaultValue: "Images/blank-profile-picture.png",
       },
       description: { type: DataTypes.TEXT, allowNull: false },
       address: DataTypes.TEXT,
