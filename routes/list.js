@@ -36,4 +36,21 @@ list.get("/", authMiddleware, async (req, res, next) => {
     console.log(e.message);
   }
 });
+
+list.get("/:id", authMiddleware, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const oneUser = await User.findByPk(id, {
+      attributes: ["id", "name", "description", "image", "country"],
+    });
+    if (!oneUser) {
+      res.status(400).send("User not found");
+    } else {
+      res.status(200).send(oneUser);
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 module.exports = list;
