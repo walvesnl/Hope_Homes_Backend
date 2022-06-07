@@ -5,12 +5,14 @@ const cors = require("cors");
 const jsonParser = express.json();
 const authRouter = require("./routes/auth");
 const listRouter = require("./routes/list");
+const requestRouter = require("./routes/request");
 
 app.use(cors());
 app.use(jsonParser);
 
 app.use("/auth", authRouter);
 app.use("/list", listRouter);
+app.use("/request", requestRouter);
 
 app.use("/Images", express.static("./Images"));
 
