@@ -2,12 +2,8 @@ const express = require("express");
 const { Router } = express;
 const list = new Router();
 const User = require("../models").user;
-const bcrypt = require("bcrypt");
-const { toJWT } = require("../auth/jwt");
-const { SALT_ROUNDS } = require("../config/constants");
 
 const authMiddleware = require("../auth/middleware");
-const { password } = require("pg/lib/defaults");
 
 list.get("/", authMiddleware, async (req, res, next) => {
   try {
@@ -40,11 +36,12 @@ list.get("/", authMiddleware, async (req, res, next) => {
 list.get("/:id", authMiddleware, async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log(id);
     const oneUser = await User.findByPk(id, {
       attributes: ["id", "name", "description", "image", "country"],
     });
     if (!oneUser) {
-      res.status(400).send("User not found");
+      res.status(404).send("User not found");
     } else {
       res.status(200).send(oneUser);
     }
@@ -53,4 +50,5 @@ list.get("/:id", authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = list;
