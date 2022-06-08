@@ -8,6 +8,7 @@ const { SALT_ROUNDS } = require("../config/constants");
 const multer = require("multer");
 const path = require("path");
 const authMiddleware = require("../auth/middleware");
+const Request = require("../models").request;
 
 // IMAGE UPLOAD LOGIC
 const storage = multer.diskStorage({
@@ -94,8 +95,6 @@ auth.post("/signup", upload, async (req, res) => {
 
 auth.post("/login", async (req, res, next) => {
   try {
-    console.log(req.body);
-
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -106,6 +105,10 @@ auth.post("/login", async (req, res, next) => {
 
     const user = await User.findOne({
       where: { email },
+      include: [
+        { model: Request, as: "receiver" },
+        { model: Request, as: "sender" },
+      ],
     });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {

@@ -7,11 +7,12 @@ const authMiddleware = require("../auth/middleware");
 requestRouter.post("/", authMiddleware, async (req, res) => {
   try {
     const { receiverId } = req.body;
-    console.log("this req", req.body);
 
     const newRequest = await Request.create({
       receiverId,
       senderId: req.user.id,
+      senderName: req.user.name,
+      senderImage: req.user.image,
     });
 
     res.status(200).send({ message: "Request sent successfully!" });
@@ -32,4 +33,5 @@ requestRouter.post("/", authMiddleware, async (req, res) => {
 //     console.log(e.message);
 //   }
 // });
+
 module.exports = requestRouter;

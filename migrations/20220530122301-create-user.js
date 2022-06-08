@@ -24,7 +24,7 @@ module.exports = {
       },
       image: {
         type: Sequelize.STRING,
-        defaultValue: "Images//blank-profile-picture.png",
+        defaultValue: "Images/blank-profile-picture.png",
       },
       description: {
         type: Sequelize.TEXT,

@@ -8,12 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      request.belongsTo(models.user, { foreignKey: "receiverId" });
-      request.belongsTo(models.user, { foreignKey: "senderId" });
+      request.belongsTo(models.user, {
+        foreignKey: "receiverId",
+        as: "receiver",
+      });
+      request.belongsTo(models.user, { foreignKey: "senderId", as: "sender" });
     }
   }
   request.init(
-    {},
+    {
+      senderName: { type: DataTypes.STRING, allowNull: false },
+      senderImage: { type: DataTypes.STRING, allowNull: true },
+    },
     {
       sequelize,
       modelName: "request",
