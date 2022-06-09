@@ -8,6 +8,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      hostName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      hostImage: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      seekerName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      seekerImage: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

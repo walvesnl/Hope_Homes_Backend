@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "receiver",
       });
       user.hasMany(models.request, { foreignKey: "senderId", as: "sender" });
+      user.hasMany(models.conversation, { foreignKey: "hostId", as: "host" });
+      user.hasMany(models.conversation, {
+        foreignKey: "seekerId",
+        as: "seeker",
+      });
     }
   }
   user.init(

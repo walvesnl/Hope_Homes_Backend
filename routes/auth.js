@@ -9,6 +9,7 @@ const multer = require("multer");
 const path = require("path");
 const authMiddleware = require("../auth/middleware");
 const Request = require("../models").request;
+const Conversation = require("../models").conversation;
 
 // IMAGE UPLOAD LOGIC
 const storage = multer.diskStorage({
@@ -108,6 +109,8 @@ auth.post("/login", async (req, res, next) => {
       include: [
         { model: Request, as: "receiver" },
         { model: Request, as: "sender" },
+        { model: Conversation, as: "seeker" },
+        { model: Conversation, as: "host" },
       ],
     });
 

@@ -20,9 +20,30 @@ module.exports = {
       onUpdate: "CASCADE",
       onDelete: "SET NULL",
     });
+    await queryInterface.addColumn("conversations", "hostId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    });
+    await queryInterface.addColumn("conversations", "seekerId", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
+    });
   },
+
   down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn("requests", "senderId");
     await queryInterface.removeColumn("requests", "receiverId");
+    await queryInterface.removeColumn("conversations", "hostId");
+    await queryInterface.removeColumn("conversations", "seekerId");
   },
 };

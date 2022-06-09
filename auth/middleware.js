@@ -1,6 +1,8 @@
 const User = require("../models").user;
 const { toData } = require("./jwt");
 const Request = require("../models").request;
+const Conversation = require("../models").conversation;
+
 async function auth(req, res, next) {
   const auth =
     req.headers.authorization && req.headers.authorization.split(" ");
@@ -15,16 +17,19 @@ async function auth(req, res, next) {
   try {
     const data = toData(auth[1]);
     const user = await User.findByPk(data.userId, {
-      include: { all: true, nested: true },
-      // {
-      //   model: Request,
-      //   as: "sender",
-      // },
-      // {
-      //   model: Request,
-      //   as: "receiver",
-      // },
-      // ],
+      include: [
+        {
+          model: Request,
+          as: "sender",
+        },
+        {
+          model: Request,
+          as: "receiver",
+        },
+
+        { model: Conversation, as: "seeker" },
+        { model: Conversation, as: "host" },
+      ],
     });
     if (!user) {
       return res.status(404).send({ message: "User does not exist" });
