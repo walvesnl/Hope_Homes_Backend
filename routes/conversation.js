@@ -1,5 +1,6 @@
 const express = require("express");
 const Conversation = require("../models").conversation;
+const Message = require("../models").message;
 const { Router } = express;
 const conversationRouter = new Router();
 const authMiddleware = require("../auth/middleware");
@@ -30,6 +31,34 @@ conversationRouter.post("/", authMiddleware, async (req, res) => {
     res.status(200).send({ message: "Conversation room created!" });
   } catch (e) {
     console.log(e.message);
+  }
+});
+
+conversationRouter.get("/:id", authMiddleware, async (req, res) => {
+  try {
+    const conv = await Conversation.findByPk(req.params.id, {
+      include: { model: Message },
+    });
+
+    if (req.user.isHost === true) {
+      if (conv.hostId !== req.user.id) {
+        return res
+          .status(401)
+          .send({ message: "You cannot access this conversation" });
+      } else {
+        return res.status(200).send(conv);
+      }
+    } else {
+      if (conv.seekerId !== req.user.id) {
+        return res
+          .status(401)
+          .send({ message: "You cannot access this conversation" });
+      } else {
+        return res.status(200).send(conv);
+      }
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
