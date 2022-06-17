@@ -4,6 +4,7 @@ const Message = require("../models").message;
 const { Router } = express;
 const conversationRouter = new Router();
 const authMiddleware = require("../auth/middleware");
+const Request = require("../models").request;
 
 conversationRouter.post("/", authMiddleware, async (req, res) => {
   try {
@@ -18,6 +19,13 @@ conversationRouter.post("/", authMiddleware, async (req, res) => {
         seekerName: req.body.name,
         seekerImage: req.body.image,
       });
+      const reqToDelete = await Request.findByPk(req.body.requestId);
+
+      reqToDelete.destroy();
+
+      res
+        .status(200)
+        .send({ message: "Conversation room created!", newConversation });
     } else {
       const newConversation = await Conversation.create({
         hostId: req.body.id,
@@ -27,8 +35,14 @@ conversationRouter.post("/", authMiddleware, async (req, res) => {
         seekerName: req.user.name,
         seekerImage: req.user.image,
       });
+      const reqToDelete = await Request.findByPk(req.body.requestId);
+
+      reqToDelete.destroy();
+
+      res
+        .status(200)
+        .send({ message: "Conversation room created!", newConversation });
     }
-    res.status(200).send({ message: "Conversation room created!" });
   } catch (e) {
     console.log(e.message);
   }

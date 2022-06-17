@@ -21,17 +21,17 @@ requestRouter.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// requestRouter.get("/", authMiddleware, async (req, res) => {
-//   try {
-//     const receiverId = req.user.id;
-//     const requestsReceived = await Request.findAll({
-//       where: Request.receiverId === receiverId,
-//       include: { model: user, attributes: ["name"] },
-//     });
-//     res.status(200).send(requestsReceived);
-//   } catch (e) {
-//     console.log(e.message);
-//   }
-// });
+requestRouter.delete("/:id", async (req, res) => {
+  try {
+    const requestId = req.params.id;
+
+    const reqToDelete = await Request.findByPk(requestId);
+    reqToDelete.destroy();
+
+    res.status(200).send({ message: "Request deleted successfully" });
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 module.exports = requestRouter;
