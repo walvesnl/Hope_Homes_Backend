@@ -15,7 +15,7 @@ requestRouter.post("/", authMiddleware, async (req, res) => {
       senderImage: req.user.image,
     });
 
-    res.status(200).send({ message: "Request sent successfully!" });
+    res.status(200).send({ message: "Request sent successfully!", newRequest });
   } catch (e) {
     console.log(e.message);
   }

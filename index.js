@@ -1,4 +1,3 @@
-const { Model } = require("sequelize");
 const express = require("express");
 const app = express();
 const socketio = require("socket.io");
@@ -34,7 +33,7 @@ io.on("connection", (socket) => {
     socket.join(conversationId);
   });
 
-  socket.on("sendMessage", async (message, callback) => {
+  socket.on("sendMessage", (message, callback) => {
     io.to(message.conversationId).emit("message", {
       senderId: message.senderId,
       body: message.body,

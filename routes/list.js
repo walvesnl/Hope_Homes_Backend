@@ -38,7 +38,16 @@ list.get("/:id", authMiddleware, async (req, res, next) => {
     const { id } = req.params;
     console.log(id);
     const oneUser = await User.findByPk(id, {
-      attributes: ["id", "name", "description", "image", "country"],
+      attributes: [
+        "id",
+        "name",
+        "description",
+        "image",
+        "country",
+        "isHost",
+        "address",
+        "city",
+      ],
     });
     if (!oneUser) {
       res.status(404).send("User not found");
