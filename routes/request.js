@@ -21,7 +21,7 @@ requestRouter.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-requestRouter.delete("/:id", async (req, res) => {
+requestRouter.delete("/delete/:id", async (req, res) => {
   try {
     const requestId = req.params.id;
 
